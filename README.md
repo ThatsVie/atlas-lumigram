@@ -235,7 +235,7 @@ If you encounter network connectivity issues while trying to run the app on your
 
 ---
 
-### ** Task 3: Home Tab**  
+## **Task 3: Home Tab**  
 
 ### **Resources**
 - **Flash List (for optimized scrolling)**: [Docs](https://shopify.github.io/flash-list/)  
