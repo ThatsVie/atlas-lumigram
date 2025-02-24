@@ -9,11 +9,7 @@ export function useImagePicker() {
   useEffect(() => {
     async function requestPermissions() {
       const { status } = await MediaLibrary.requestPermissionsAsync();
-      if (status === "granted") {
-        setPermissionGranted(true);
-      } else {
-        setPermissionGranted(false);
-      }
+      setPermissionGranted(status === "granted");
     }
 
     requestPermissions();
@@ -30,7 +26,7 @@ export function useImagePicker() {
     }
 
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: "images",
+      mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,

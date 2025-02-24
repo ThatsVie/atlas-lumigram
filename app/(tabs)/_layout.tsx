@@ -91,6 +91,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen name="profile/[id]" options={{ href: null, title: "My Profile" }} />
+      <Tabs.Screen name="profile/edit" options={{ href: null, title: "Edit Profile" }} />
     </Tabs>
   );
 }

@@ -4,7 +4,7 @@
 
 ## Project Overview
 
-This project is **Lumigram**, an Instagram clone built with React Native using Expo. It is the first part of a two-part project. Part 1 focuses on building the frontend using React Native, while Part 2 will integrate Firebase as the backend.
+This project is **Lumigram**, an Instagram clone built with React Native using Expo. Part 1 focuses on building the frontend using React Native, while Part 2 will integrate Firebase as the backend.
 
 **Project Overview Video:**  
 [Watch on Loom](https://www.loom.com/share/aa46d4ede4a140348c75c7c141d899a1?sid=8ff29724-0055-4570-8c49-0f975dfab634)
@@ -24,6 +24,8 @@ This project is **Lumigram**, an Instagram clone built with React Native using E
 - [Task 3: Home Tab](#task-3-home-tab)
 - [Task 4: Add Post Tab](#task-4-add-post-tab)
 - [Task 5: Favorites Tab](#task-5-favorites-tab)
+- [Task 6: Profile Tab](#task-6-profile-tab)
+- [Task 7: Search Tab](#task-7-search-tab)
 - [Reflection](#reflection)
 
 ---
@@ -372,5 +374,61 @@ Another issue was that long press and double tap gestures were interfering with 
   - **Fix:** Wrapped captions inside `<Text>` to properly render.  
 
 ---
+
+## Task 6: Profile Tab
+
+### **What I Did**
+
+1. **Updated Profile Tab (`profile/index.tsx`)**
+- Displays profile picture and username.
+- Fetches current user’s posts from `profileFeed`.
+- Implemented grid layout with three images per row using `FlatList`.
+- Clicking the profile image navigates to the edit profile screen.
+
+2. **Updated Profile Detail Page (`profile/[id].tsx`)**
+- Used `useLocalSearchParams` to fetch the correct user profile.
+- Displays correct username and profile image from `userSearch`.
+- Shows user’s uploaded posts in a three-column grid.
+- If user ID does not exist, displays "User not found".
+
+3. **Created Edit Profile Screen (`profile/edit.tsx`)**
+- Users can select a new profile image using `expo-image-picker`.
+- Users can update their username with an input field.
+- Clicking save profile:
+  - Displays an alert confirming the update.
+  - Navigates back to the profile screen.
+  - Updates local state but does not persist changes yet.
+
+5 **Updated `_layout.tsx` to Hide `profile/edit` from Tabs**
+- Ensured Edit Profile screen does not appear in the bottom tab navigation.
+
+---
+
+### Troubleshooting
+
+- **Profile picture was not updating after saving**
+  - Used `useImagePicker()` correctly to store the new image in state.
+- **Edit profile screen was showing in tabs**
+  - Added `options={{ href: null }}` in `_layout.tsx` to hide it.
+
+---
+
+## **Task 7: Search Tab**
+
+### What I Did
+
+1. **Updated Search Tab (`search.tsx`)**
+- Implemented a search input field using `TextInput`.
+- Used state to track user’s input.
+- Filtered users dynamically from `userSearch` based on input.
+- Displayed matching users in a `FlatList` with avatars and usernames.
+
+2. **Enabled Profile Navigation**
+- Clicking a user in the search results navigates to `/profile/[id]`.
+- Updated `profile/[id].tsx` to load the correct user profile dynamically.
+
+
+---
+
 
 ## Reflection

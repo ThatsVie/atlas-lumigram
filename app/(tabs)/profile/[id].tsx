@@ -1,17 +1,39 @@
-import { View, Text } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from "expo-router";
+import { View, Text, Image, FlatList, StyleSheet, Dimensions } from "react-native";
+import { profileFeed, userSearch } from "@/placeholder";
+
+const screenWidth = Dimensions.get("window").width;
+const imageSize = screenWidth / 3;
 
 export default function UserProfile() {
   const { id } = useLocalSearchParams();
+  const user = userSearch.find((u) => u.id === id);
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text accessibilityRole="header" style={{ fontSize: 24, fontWeight: 'bold' }}>My Profile</Text>
-      <Text>User Profile for ID: {id}</Text>
+    <View style={styles.container}>
+      {user ? (
+        <>
+          <Image source={{ uri: user.avatar }} style={styles.profileImage} />
+          <Text style={styles.username}>{user.username}</Text>
+          <FlatList
+            data={profileFeed}
+            renderItem={({ item }) => (
+              <Image source={{ uri: item.image }} style={styles.image} resizeMode="cover" />
+            )}
+            keyExtractor={(item) => item.id}
+            numColumns={3}
+          />
+        </>
+      ) : (
+        <Text>User not found.</Text>
+      )}
     </View>
   );
 }
 
-export const screenOptions = {
-  title: "My Profile",
-};
+const styles = StyleSheet.create({
+  container: { flex: 1, alignItems: "center", backgroundColor: "#ECEDEE", padding: 10 },
+  profileImage: { width: 100, height: 100, borderRadius: 50, marginBottom: 10 },
+  username: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
+  image: { width: imageSize, height: imageSize },
+});
