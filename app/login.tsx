@@ -1,0 +1,79 @@
+import { View, Text, TextInput, Pressable, Image, StyleSheet, Animated } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useRef } from 'react';
+import { Colors } from '@/constants/Colors';
+import * as Haptics from 'expo-haptics';
+
+export default function LoginScreen() {
+  const router = useRouter();
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const linkScaleAnim = useRef(new Animated.Value(1)).current;
+
+  function handlePressIn() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    Animated.spring(scaleAnim, { toValue: 0.97, useNativeDriver: true }).start();
+  }
+
+  function handlePressOut() {
+    Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true }).start(() => {
+      router.replace("/(tabs)/home");
+    });
+  }
+
+  function handleLinkPressIn() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    Animated.spring(linkScaleAnim, { toValue: 0.97, useNativeDriver: true }).start();
+  }
+
+  function handleLinkPressOut(route: "/register" | "/login") {
+    Animated.spring(linkScaleAnim, { toValue: 1, useNativeDriver: true }).start(() => {
+      router.push(route);
+    });
+  }
+
+  return (
+    <View style={styles.container}>
+      <Image source={require('@/assets/images/logo.png')} style={styles.logo} resizeMode="contain" />
+
+      <Text accessibilityRole="header" style={styles.header}>Login</Text>
+
+      <TextInput placeholder="Email" placeholderTextColor="#FFFFFF" style={styles.input} keyboardType="email-address" autoCapitalize="none" />
+      <TextInput placeholder="Password" placeholderTextColor="#FFFFFF" style={styles.input} secureTextEntry />
+
+      <Animated.View style={[styles.buttonContainer, { transform: [{ scale: scaleAnim }] }]}>
+        <Pressable
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+          style={styles.button}
+          accessibilityRole="button"
+        >
+          <Text style={styles.buttonText}>Sign in</Text>
+        </Pressable>
+      </Animated.View>
+
+      <Animated.View style={[styles.linkContainer, { transform: [{ scale: linkScaleAnim }] }]}>
+        <Pressable
+          onPressIn={handleLinkPressIn}
+          onPressOut={() => handleLinkPressOut("/register")}
+          style={styles.link}
+          accessibilityRole="link"
+        >
+          <Text style={styles.linkText}>Create a new account</Text>
+        </Pressable>
+      </Animated.View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.dark.background, paddingHorizontal: 20 },
+  logo: { width: '100%', height: 120, marginBottom: 30 },
+  header: { fontSize: 24, fontWeight: 'bold', color: Colors.dark.text, marginBottom: 20 },
+  input: { width: '90%', padding: 12, borderWidth: 2, borderColor: Colors.light.tint, borderRadius: 8, marginVertical: 8, color: Colors.dark.text },
+  buttonContainer: { width: '90%', alignItems: 'center', marginTop: 20 },
+  button: { width: '100%', backgroundColor: Colors.light.tint, padding: 14, borderRadius: 8, alignItems: 'center' },
+  buttonText: { color: '#FFFFFF', fontWeight: 'bold', fontSize: 16 },
+  linkContainer: { width: '90%', alignItems: 'center', marginTop: 10 },
+  link: { width: '100%', padding: 12, borderWidth: 2, borderColor: '#000000', borderRadius: 8, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 3 },
+  linkText: { color: '#FFFFFF', fontSize: 16 },
+});
