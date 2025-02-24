@@ -243,7 +243,7 @@ If you encounter network connectivity issues while trying to run the app on your
 
 ---
 
-### ** What I Did**
+### **What I Did**
 1. **Implemented a scrollable image feed using `FlashList`.**  
    - Used `placeholder.tsx` to display a **list of images**.  
    - Ensured images maintain a **square aspect ratio**.  
@@ -261,7 +261,7 @@ If you encounter network connectivity issues while trying to run the app on your
 
 ---
 
-### ** Troubleshooting & Fixes**  
+### **Troubleshooting & Fixes**  
 At first, long press did not update the UI. The state was changing, but React was not re-rendering the captions. To fix this, I used **functional updates** in `setVisibleCaptions` to ensure proper state changes.  
 
 Captions were also not appearing because of absolute positioning issues. Instead of placing them outside the image, I positioned them inside the image container.  
