@@ -22,6 +22,8 @@ This project is **Lumigram**, an Instagram clone built with React Native using E
 - [Task 1: Application Routing](#task-1-application-routing)
 - [Task 2: Login & Register Screens](#task-2-login--register-screens)
 - [Task 3: Home Tab](#task-3-home-tab)
+- [Task 4: Add Post Tab](#task-4-add-post-tab)
+- [Task 5: Favorites Tab](#task-5-favorites-tab)
 - [Reflection](#reflection)
 
 ---
@@ -148,16 +150,16 @@ If you encounter network connectivity issues while trying to run the app on your
 
 ---
 
-## **Task 1: Application Routing**  
+## Task 1: Application Routing  
 
-### **Resources**
+### Resources
 - **Expo Routing Walkthrough**: [Watch Video](https://www.loom.com/share/5348cee096b04b16a149fde8a8fc064b?sid=c0d3c509-2535-499f-95f4-1f1bb2de2bf9)
 - **Expo Tabs**: [Docs](https://docs.expo.dev/router/advanced/tabs/)
 - **Expo Stack Navigation**: [Docs](https://docs.expo.dev/router/advanced/stack/)
 
 ---
 
-### **What I Did**  
+### What I Did
 
 1. **Implemented Stack Router for Authentication**
    - Ensured the app starts on `login.tsx`.
@@ -193,9 +195,9 @@ If you encounter network connectivity issues while trying to run the app on your
 
 ---
 
-## **Task 2: Login & Register Screens**  
+## Task 2: Login & Register Screens 
 
-### **What I Did**  
+### What I Did  
 
 1. **Created the Login Screen (`login.tsx`)**
    - **Login screen is the first screen when the app opens**.
@@ -235,15 +237,16 @@ If you encounter network connectivity issues while trying to run the app on your
 
 ---
 
-## **Task 3: Home Tab**  
+## Task 3: Home Tab  
 
-### **Resources**
+### Resources
 - **Flash List (for optimized scrolling)**: [Docs](https://shopify.github.io/flash-list/)  
 - **React Native Gesture Handler (for touch interactions)**: [Docs](https://docs.swmansion.com/react-native-gesture-handler/)  
 
 ---
 
-### **What I Did**
+### What I Did
+
 1. **Implemented a scrollable image feed using `FlashList`.**  
    - Used `placeholder.tsx` to display a **list of images**.  
    - Ensured images maintain a **square aspect ratio**.  
@@ -261,12 +264,112 @@ If you encounter network connectivity issues while trying to run the app on your
 
 ---
 
-### **Troubleshooting & Fixes**  
+### Troubleshooting & Fixes  
 At first, long press did not update the UI. The state was changing, but React was not re-rendering the captions. To fix this, I used **functional updates** in `setVisibleCaptions` to ensure proper state changes.  
 
 Captions were also not appearing because of absolute positioning issues. Instead of placing them outside the image, I positioned them inside the image container.  
 
 Another issue was that long press and double tap gestures were interfering with each other. To resolve this, I used `Gesture.Simultaneous(longPress, doubleTap)`, allowing both gestures to function properly.  
+
+---
+
+## Task 4: Add Post Tab
+
+### Resources
+- **Expo Image Picker**: [Docs](https://docs.expo.dev/versions/latest/sdk/imagepicker/) – Used for selecting images from the device.
+- **Expo Media Library**: [Docs](https://docs.expo.dev/versions/latest/sdk/media-library/) – Handles media permissions and storage.
+- **Walkthrough Video**: [Watch](https://www.loom.com/share/4b0e3d52f319461199428131dd2588ab?sid=dc806fef-73cc-4b36-a646-df03033942fb) – Guide for implementing image selection.
+
+---
+
+### What I Did
+
+1. **Implemented Image Selection**
+   - Used **`expo-image-picker`** to allow users to select an image from their device.
+   - Ensured images are **cropped to a square format** (400x400).
+
+2. **Handled Permissions for Image Access**
+   - Used **`expo-media-library`** to request media access permissions.
+   - If permission is not granted, the user is alerted.
+   - (Note: On some devices, permission may be automatically granted.)
+
+3. **Created UI Components**
+   - **Before selecting an image:**
+     - Displayed a **placeholder image** (`assets/images/placeholder.png`).
+     - Showed a **"Choose a Photo"** button.
+   - **After selecting an image:**
+     - Displayed the **selected image**.
+     - Added a **caption input field** with a teal border.
+     - Included a **"Save" button**, which triggers a success notification.
+     - Included a **"Reset" button**, which clears the image and caption.
+
+4. **Ensured Accessibility**
+   - All buttons have appropriate **`accessibilityRole`** attributes.
+   - **`accessibilityLabel`** and **`accessibilityHint`** added to interactive elements.
+
+---
+
+### Troubleshooting & Challenges
+
+- **Permission Prompt Not Appearing**
+  - Initially, the app was supposed to **ask for media access permission** before opening the image picker.
+  - On some devices, the permission prompt was skipped, and access was granted automatically.
+  - **Solution:** Added explicit permission handling, but behavior may vary across devices.
+  
+- **Deprecated `MediaTypeOptions`**
+  - `ImagePicker.MediaTypeOptions.Images` was **deprecated**.
+  - **Solution:** Used `"Images"` as the value for `mediaTypes` instead.
+
+- **Image Crop Issue**
+  - The cropping tool was allowing **non-square** selections.
+  - **Solution:** Used `aspect: [1, 1]` to enforce a **square crop (400x400)**.
+
+---
+
+## Task 5: Favorites Tab 
+
+### Resources 
+- **Flash List:** [Shopify Flash List Docs](https://shopify.github.io/flash-list/) – Efficient list rendering for large data sets.  
+- **React Native Gesture Handler:** [Docs](https://docs.swmansion.com/react-native-gesture-handler/) – Gesture detection for long press & double tap.  
+
+---
+
+### What I Did  
+
+1. **Implemented Scrollable List of Images**  
+   - Used `FlashList` to display images from `favoritesFeed` in `placeholder.tsx`.  
+   - Ensured **fast rendering** with `estimatedItemSize`.  
+
+2. **Added Long Press Gesture for Captions**  
+   - Users **long press** an image to show its caption.  
+   - Caption **appears on top of the image** in a semi-transparent overlay.  
+   - **Haptic feedback added** for better interaction.  
+
+3. **Added Double Tap Gesture for Favoriting**  
+   - Users **double tap** an image to favorite it (future functionality).  
+   - For now, it **shows an alert** confirming the action.  
+   - **Haptic success feedback added** on double tap.  
+
+4. **Fixed Scrolling Issue on Long Press**  
+   - **Used `extraData={visibleCaptions}`** to prevent list from resetting on caption updates.  
+   - This ensures captions appear without affecting scroll position.  
+
+5. **Ensured Accessibility**  
+   - **Screen reader labels** added for images and captions.  
+   - **Gestures are responsive** with adequate timing for long press.  
+
+---
+
+### Troubleshooting & Fixes 
+
+- **Issue:** Caption was not appearing after long press.  
+  - **Fix:** Used `useState` to track `visibleCaptions` for each image.  
+
+- **Issue:** Scrolling back to top when long pressing an image.  
+  - **Fix:** Used `extraData` in `FlashList` to prevent rerendering the entire list.  
+
+- **Issue:** Console error `Text strings must be rendered within a <Text> component`.  
+  - **Fix:** Wrapped captions inside `<Text>` to properly render.  
 
 ---
 

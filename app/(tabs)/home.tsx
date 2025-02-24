@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { View, Text, Image, StyleSheet, Alert, Dimensions } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { homeFeed } from "@/placeholder";
@@ -6,20 +6,16 @@ import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import * as Haptics from "expo-haptics"; 
 
 const screenWidth = Dimensions.get("window").width;
-const imageSize = screenWidth - 20; 
+const imageSize = screenWidth - 20;
 
 export default function HomeScreen() {
   const [visibleCaptions, setVisibleCaptions] = useState<{ [key: string]: boolean }>({});
-  const [forceRender, setForceRender] = useState(0);
 
   const handleLongPress = (id: string) => {
     setVisibleCaptions((prevState) => {
-      const newState = { ...prevState, [id]: !prevState[id] };
-      console.log("Updated visibleCaptions:", newState);
-      return newState;
+      return { ...prevState, [id]: !prevState[id] };
     });
 
-    setForceRender((prev) => prev + 1);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   };
 
@@ -27,10 +23,6 @@ export default function HomeScreen() {
     Alert.alert("Image Favorited", `You favorited image ${id}`);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   };
-
-  useEffect(() => {
-    console.log("Re-render triggered:", forceRender);
-  }, [forceRender]);
 
   const renderItem = ({ item }: { item: { id: string; image: string; caption: string } }) => {
     const doubleTapGesture = Gesture.Tap()
@@ -51,25 +43,31 @@ export default function HomeScreen() {
       <GestureDetector gesture={Gesture.Simultaneous(doubleTapGesture, longPressGesture)}>
         <View style={styles.imageContainer}>
           <Image source={{ uri: item.image }} style={styles.image} resizeMode="cover" />
-          {visibleCaptions[item.id] && (
+          {visibleCaptions[item.id] && item.caption ? (
             <View style={styles.captionContainer}>
-              <Text style={styles.caption}>{item.caption}</Text>
+              <Text style={styles.caption}>{item.caption || "No caption available"}</Text>
             </View>
-          )}
+          ) : null}
         </View>
       </GestureDetector>
     );
   };
 
   return (
-    <View style={styles.container} key={forceRender}>
-      <FlashList data={homeFeed} renderItem={renderItem} keyExtractor={(item) => item.id} estimatedItemSize={imageSize} />
+    <View style={styles.container}>
+      <FlashList 
+        data={homeFeed} 
+        renderItem={renderItem} 
+        keyExtractor={(item) => item.id} 
+        estimatedItemSize={imageSize} 
+        extraData={visibleCaptions}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", paddingHorizontal: 10 },
+  container: { flex: 1, backgroundColor: "#ECEDEE", paddingHorizontal: 10 },
   imageContainer: {
     marginBottom: 15,
     position: "relative",

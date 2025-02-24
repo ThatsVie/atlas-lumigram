@@ -1,9 +1,22 @@
-import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import LogoutComponent from '@/components/LogoutComponent';
-import { Colors } from '@/constants/Colors';
+import { Tabs } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { useEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
+import * as Haptics from "expo-haptics";
+import LogoutComponent from "@/components/LogoutComponent";
+import { Colors } from "@/constants/Colors";
 
 export default function TabLayout() {
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("state", () => {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   return (
     <Tabs
       screenOptions={{
@@ -12,70 +25,70 @@ export default function TabLayout() {
         headerRight: () => <LogoutComponent />,
       }}
     >
-      <Tabs.Screen 
-        name="home" 
-        options={{ 
-          title: 'Home Feed', 
+      <Tabs.Screen
+        name="home"
+        options={{
+          title: "Home Feed",
           tabBarIcon: ({ focused }) => (
-            <Ionicons 
-              name={focused ? "home" : "home-outline"} 
-              size={28} 
+            <Ionicons
+              name={focused ? "home" : "home-outline"}
+              size={28}
               color={focused ? Colors.light.tint : Colors.light.icon}
             />
-          ) 
-        }} 
+          ),
+        }}
       />
-      <Tabs.Screen 
-        name="search" 
-        options={{ 
-          title: 'Search', 
+      <Tabs.Screen
+        name="search"
+        options={{
+          title: "Search",
           tabBarIcon: ({ focused }) => (
-            <Ionicons 
-              name={focused ? "search" : "search-outline"} 
-              size={28} 
+            <Ionicons
+              name={focused ? "search" : "search-outline"}
+              size={28}
               color={focused ? Colors.light.tint : Colors.light.icon}
             />
-          ) 
-        }} 
+          ),
+        }}
       />
-      <Tabs.Screen 
-        name="add-post" 
-        options={{ 
-          title: 'Add Post', 
+      <Tabs.Screen
+        name="add-post"
+        options={{
+          title: "Add Post",
           tabBarIcon: ({ focused }) => (
-            <Ionicons 
-              name={focused ? "add" : "add-outline"} 
-              size={28} 
+            <Ionicons
+              name={focused ? "add" : "add-outline"}
+              size={28}
               color={focused ? Colors.light.tint : Colors.light.icon}
             />
-          ) 
-        }} 
+          ),
+        }}
       />
-      <Tabs.Screen 
-        name="favorites" 
-        options={{ 
-          title: 'Favorites', 
+      <Tabs.Screen
+        name="favorites"
+        options={{
+          title: "Favorites",
           tabBarIcon: ({ focused }) => (
-            <Ionicons 
-              name={focused ? "heart" : "heart-outline"} 
-              size={28} 
+            <Ionicons
+              name={focused ? "heart" : "heart-outline"}
+              size={28}
               color={focused ? Colors.light.tint : Colors.light.icon}
             />
-          ) 
-        }} 
+          ),
+        }}
       />
-      <Tabs.Screen 
-        name="profile/index" 
-        options={{ 
-          title: 'Profile', 
+      <Tabs.Screen
+        name="profile/index"
+        options={{
+          title: "Profile",
           tabBarIcon: ({ focused }) => (
-            <Ionicons 
-              name={focused ? "person" : "person-outline"} 
-              size={28} 
+            <Ionicons
+              name={focused ? "person" : "person-outline"}
+              size={28}
               color={focused ? Colors.light.tint : Colors.light.icon}
             />
-          ) 
-        }} 
+          ),
+        }}
       />
       <Tabs.Screen name="profile/[id]" options={{ href: null, title: "My Profile" }} />
     </Tabs>
