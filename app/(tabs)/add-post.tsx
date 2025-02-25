@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, StyleSheet, Image, TextInput, Pressable, Text } from "react-native";
+import { View, StyleSheet, Image, TextInput, Pressable, Text, Alert } from "react-native";
 import { useImagePicker } from "@/hooks/useImagePicker";
 import * as Haptics from "expo-haptics";
 import { usePosts } from "@/context/PostContext";
@@ -15,16 +15,37 @@ export default function AddPostScreen() {
   }
 
   function handleSave() {
-    if (image && caption.trim()) {
-      addPost(image, caption);
-      alert("Post Saved!");
-      reset();
-      setCaption("");
+    if (!image) {
+      Alert.alert("Error", "Please select an image before saving.");
+      return;
+    }
+
+    if (!caption.trim()) {
+      Alert.alert(
+        "Add a Caption?",
+        "Would you like to save this post without a caption?",
+        [
+          { text: "Cancel", style: "cancel" },
+          { text: "Save without Caption", onPress: () => savePost("") },
+        ]
+      );
     } else {
-      alert("Please select an image and enter a caption.");
+      savePost(caption);
     }
   }
 
+  function savePost(finalCaption: string) {
+    if (!image) {
+      Alert.alert("Error", "No image selected.");
+      return;
+    }
+  
+    addPost(image, finalCaption || ""); 
+    Alert.alert("Success", "Post saved to your profile!");
+    reset();
+    setCaption("");
+  }
+  
   function handleReset() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     reset();
@@ -36,24 +57,26 @@ export default function AddPostScreen() {
       {!image ? (
         <>
           <Image source={require("@/assets/images/placeholder.png")} style={styles.image} />
-          <Pressable onPress={handleChoosePhoto} style={styles.choosePhotoButton}>
+          <Pressable onPress={handleChoosePhoto} style={styles.choosePhotoButton} accessibilityRole="button">
             <Text style={styles.buttonText}>Choose a photo</Text>
           </Pressable>
         </>
       ) : (
         <>
-          <Image source={{ uri: image }} style={styles.image} />
+          <Image source={{ uri: image }} style={styles.image} accessibilityLabel="Selected Image Preview" />
           <TextInput
             style={styles.input}
             placeholder="Add a caption"
             placeholderTextColor="#687076"
             value={caption}
             onChangeText={setCaption}
+            accessibilityLabel="Caption Input"
+            accessibilityHint="Enter a caption for your post"
           />
-          <Pressable onPress={handleSave} style={styles.saveButton}>
+          <Pressable onPress={handleSave} style={styles.saveButton} accessibilityRole="button">
             <Text style={styles.buttonText}>Save</Text>
           </Pressable>
-          <Pressable onPress={handleReset} style={styles.resetButton}>
+          <Pressable onPress={handleReset} style={styles.resetButton} accessibilityRole="button">
             <Text style={styles.resetButtonText}>Reset</Text>
           </Pressable>
         </>
