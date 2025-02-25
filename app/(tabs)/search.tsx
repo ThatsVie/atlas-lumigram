@@ -2,7 +2,6 @@ import { useState } from "react";
 import { View, TextInput, FlatList, Text, Image, Pressable, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { userSearch } from "@/placeholder";
-import { Colors } from "@/constants/Colors";
 
 export default function SearchScreen() {
   const [query, setQuery] = useState("");
@@ -17,7 +16,7 @@ export default function SearchScreen() {
       <TextInput
         style={styles.input}
         placeholder="Search for a user..."
-        placeholderTextColor={Colors.light.icon}
+        placeholderTextColor="#687076"
         value={query}
         onChangeText={setQuery}
         accessibilityLabel="Search Input"
@@ -47,7 +46,7 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 12,
     borderWidth: 2,
-    borderColor: Colors.light.tint,
+    borderColor: "#1ED2AF",
     borderRadius: 8,
     marginBottom: 10,
     backgroundColor: "#fff",

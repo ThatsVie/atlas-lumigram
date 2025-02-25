@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import LogoutComponent from "@/components/LogoutComponent";
-import { Colors } from "@/constants/Colors";
 
 export default function TabLayout() {
   const navigation = useNavigation();
@@ -20,8 +19,8 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors.light.tint,
-        tabBarInactiveTintColor: Colors.light.icon,
+        tabBarActiveTintColor: "#1ED2AF",
+        tabBarInactiveTintColor: "#687076",
         headerRight: () => <LogoutComponent />,
       }}
     >
@@ -33,7 +32,7 @@ export default function TabLayout() {
             <Ionicons
               name={focused ? "home" : "home-outline"}
               size={28}
-              color={focused ? Colors.light.tint : Colors.light.icon}
+              color={focused ? "#1ED2AF" : "#687076"}
             />
           ),
         }}
@@ -46,7 +45,7 @@ export default function TabLayout() {
             <Ionicons
               name={focused ? "search" : "search-outline"}
               size={28}
-              color={focused ? Colors.light.tint : Colors.light.icon}
+              color={focused ? "#1ED2AF" : "#687076"}
             />
           ),
         }}
@@ -59,7 +58,7 @@ export default function TabLayout() {
             <Ionicons
               name={focused ? "add" : "add-outline"}
               size={28}
-              color={focused ? Colors.light.tint : Colors.light.icon}
+              color={focused ? "#1ED2AF" : "#687076"}
             />
           ),
         }}
@@ -72,7 +71,7 @@ export default function TabLayout() {
             <Ionicons
               name={focused ? "heart" : "heart-outline"}
               size={28}
-              color={focused ? Colors.light.tint : Colors.light.icon}
+              color={focused ? "#1ED2AF" : "#687076"}
             />
           ),
         }}
@@ -85,7 +84,7 @@ export default function TabLayout() {
             <Ionicons
               name={focused ? "person" : "person-outline"}
               size={28}
-              color={focused ? Colors.light.tint : Colors.light.icon}
+              color={focused ? "#1ED2AF" : "#687076"}
             />
           ),
         }}

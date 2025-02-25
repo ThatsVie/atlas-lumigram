@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { View, StyleSheet, Image, TextInput, Pressable, Text } from "react-native";
 import { useImagePicker } from "@/hooks/useImagePicker";
-import { Colors } from "@/constants/Colors";
 import * as Haptics from "expo-haptics";
 
 export default function AddPostScreen() {
@@ -27,7 +26,6 @@ export default function AddPostScreen() {
     <View style={styles.container}>
       {!image ? (
         <>
-
           <Image source={require("@/assets/images/placeholder.png")} style={styles.image} />
 
           <Pressable onPress={handleChoosePhoto} style={styles.choosePhotoButton} accessibilityRole="button">
@@ -36,13 +34,12 @@ export default function AddPostScreen() {
         </>
       ) : (
         <>
-
           <Image source={{ uri: image }} style={styles.image} accessibilityLabel="Selected Image Preview" />
 
           <TextInput
             style={styles.input}
             placeholder="Add a caption"
-            placeholderTextColor={Colors.light.icon}
+            placeholderTextColor="#687076"
             value={caption}
             onChangeText={setCaption}
             accessibilityLabel="Caption Input"
@@ -66,7 +63,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#ECEDEE", padding: 20 },
   image: { width: 300, height: 300, borderRadius: 10, marginBottom: 20 },
   choosePhotoButton: {
-    backgroundColor: Colors.light.tint,
+    backgroundColor: "#1ED2AF",
     padding: 12,
     borderRadius: 8,
     alignItems: "center",
@@ -76,12 +73,12 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 10,
     borderWidth: 2,
-    borderColor: Colors.light.tint,
+    borderColor: "#1ED2AF",
     borderRadius: 8,
     marginBottom: 10,
   },
   saveButton: {
-    backgroundColor: Colors.light.tint,
+    backgroundColor: "#1ED2AF",
     padding: 12,
     borderRadius: 8,
     alignItems: "center",

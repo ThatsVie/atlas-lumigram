@@ -2,7 +2,6 @@ import { useState } from "react";
 import { View, Text, TextInput, Pressable, Image, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { useImagePicker } from "@/hooks/useImagePicker";
-import { Colors } from "@/constants/Colors";
 import { useProfile } from "@/context/ProfileContext";
 
 export default function EditProfileScreen() {
@@ -35,7 +34,7 @@ export default function EditProfileScreen() {
         value={tempUsername}
         onChangeText={setTempUsername}
         placeholder="Enter username"
-        placeholderTextColor={Colors.light.icon}
+        placeholderTextColor="#687076"
       />
       <Pressable onPress={handleSave} style={styles.saveButton}>
         <Text style={styles.buttonText}>Save profile</Text>
@@ -51,13 +50,13 @@ const styles = StyleSheet.create({
     width: "80%",
     padding: 12,
     borderWidth: 2,
-    borderColor: Colors.light.tint,
+    borderColor: "#1ED2AF",
     borderRadius: 8,
     marginBottom: 10,
     textAlign: "center",
   },
   saveButton: {
-    backgroundColor: Colors.light.tint,
+    backgroundColor: "#1ED2AF",
     padding: 12,
     borderRadius: 8,
     alignItems: "center",

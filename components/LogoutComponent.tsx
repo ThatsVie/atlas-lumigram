@@ -1,7 +1,6 @@
 import { Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Colors } from '@/constants/Colors';
 import * as Haptics from 'expo-haptics';
 
 export default function LogoutComponent() {
@@ -19,7 +18,7 @@ export default function LogoutComponent() {
       accessibilityRole="button"
       accessibilityLabel="Logout"
     >
-      <Ionicons name="log-out-outline" size={24} color={Colors.light.tint} />
+      <Ionicons name="log-out-outline" size={24} color="#1ED2AF" />
     </Pressable>
   );
 }
