@@ -1,20 +1,23 @@
 import React, { useState } from "react";
 import { View, Text, Image, StyleSheet, Alert, Dimensions } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import { homeFeed } from "@/placeholder";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
-import * as Haptics from "expo-haptics"; 
+import * as Haptics from "expo-haptics";
+import { usePosts } from "@/context/PostContext";
+import { homeFeed } from "@/placeholder";
 
 const screenWidth = Dimensions.get("window").width;
 const imageSize = screenWidth - 20;
 
 export default function HomeScreen() {
   const [visibleCaptions, setVisibleCaptions] = useState<{ [key: string]: boolean }>({});
+  const { posts } = usePosts();
 
   const handleLongPress = (id: string) => {
-    setVisibleCaptions((prevState) => {
-      return { ...prevState, [id]: !prevState[id] };
-    });
+    setVisibleCaptions((prevState) => ({
+      ...prevState,
+      [id]: !prevState[id],
+    }));
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   };
@@ -55,19 +58,24 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <FlashList 
-        data={homeFeed} 
-        renderItem={renderItem} 
-        keyExtractor={(item) => item.id} 
-        estimatedItemSize={imageSize} 
-        extraData={visibleCaptions}
-      />
+      {posts.length === 0 && homeFeed.length === 0 ? (
+        <Text style={styles.emptyText}>No posts yet. Add some!</Text>
+      ) : (
+        <FlashList
+          data={[...posts, ...homeFeed]}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          estimatedItemSize={imageSize}
+          extraData={visibleCaptions}
+        />
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#ECEDEE", paddingHorizontal: 10 },
+  emptyText: { textAlign: "center", fontSize: 18, color: "#687076", marginTop: 20 },
   imageContainer: {
     marginBottom: 15,
     position: "relative",
