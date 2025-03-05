@@ -1,55 +1,83 @@
-import { useState } from "react";
-import { View, StyleSheet, Image, TextInput, Pressable, Text, Alert } from "react-native";
+import { useState, useEffect, useRef } from "react";
+import { 
+  View, StyleSheet, Image, TextInput, Pressable, Text, 
+  Alert, ActivityIndicator 
+} from "react-native";
 import { useImagePicker } from "@/hooks/useImagePicker";
 import * as Haptics from "expo-haptics";
 import { usePosts } from "@/context/PostContext";
 
 export default function AddPostScreen() {
   const { image, openImagePicker, reset } = useImagePicker();
-  const { addPost } = usePosts();
+  const { addPost, loading } = usePosts();
   const [caption, setCaption] = useState("");
+  const isSubmitting = useRef(false); // Prevents duplicate submissions
 
+  // Ensures UI resets after a successful post
+  useEffect(() => {
+    if (!loading) {
+      reset();
+      setCaption("");
+      isSubmitting.current = false; // Unlock submission after completion
+    }
+  }, [loading]);
+
+  // Handles selecting a photo
   async function handleChoosePhoto() {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     openImagePicker();
   }
 
-  function handleSave() {
-    if (!image) {
+  // Handles post submission.
+  async function handleSave() {
+    if (!image || loading || isSubmitting.current) {
       Alert.alert("Error", "Please select an image before saving.");
       return;
     }
+
+    isSubmitting.current = true; // Lock to prevent duplicates
 
     if (!caption.trim()) {
       Alert.alert(
         "Add a Caption?",
         "Would you like to save this post without a caption?",
         [
-          { text: "Cancel", style: "cancel" },
+          { text: "Cancel", style: "cancel", onPress: () => (isSubmitting.current = false) },
           { text: "Save without Caption", onPress: () => savePost("") },
         ]
       );
     } else {
-      savePost(caption);
+      await savePost(caption);
     }
   }
 
-  function savePost(finalCaption: string) {
-    if (!image) {
-      Alert.alert("Error", "No image selected.");
+  // Saves the post by uploading the image and storing post details.
+  async function savePost(finalCaption: string) {
+    if (!image || loading) {
+      Alert.alert("Error", "No image selected or upload in progress.");
+      isSubmitting.current = false; // Unlock if canceled
       return;
     }
-  
-    addPost(image, finalCaption || ""); 
-    Alert.alert("Success", "Post saved to your profile!");
-    reset();
-    setCaption("");
-  }
-  
-  function handleReset() {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    reset();
-    setCaption("");
+
+    try {
+      console.log("Uploading post...");
+      await addPost(image, finalCaption || "");
+
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      Alert.alert("Success", "Post saved to your profile!");
+
+      // Ensuring UI resets properly
+      setTimeout(() => {
+        reset();
+        setCaption("");
+        isSubmitting.current = false; // Unlock for next post
+      }, 500);
+    } catch (error) {
+      console.error("Error saving post:", error);
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert("Upload Failed", "Something went wrong. Please try again.");
+      isSubmitting.current = false; // Unlock in case of failure
+    }
   }
 
   return (
@@ -57,13 +85,22 @@ export default function AddPostScreen() {
       {!image ? (
         <>
           <Image source={require("@/assets/images/placeholder.png")} style={styles.image} />
-          <Pressable onPress={handleChoosePhoto} style={styles.choosePhotoButton} accessibilityRole="button">
+          <Pressable 
+            onPress={handleChoosePhoto} 
+            style={[styles.choosePhotoButton]} 
+            accessibilityRole="button"
+            disabled={loading}
+          >
             <Text style={styles.buttonText}>Choose a photo</Text>
           </Pressable>
         </>
       ) : (
         <>
-          <Image source={{ uri: image }} style={styles.image} accessibilityLabel="Selected Image Preview" />
+          <Image 
+            source={{ uri: image }} 
+            style={styles.image} 
+            accessibilityLabel="Selected Image Preview" 
+          />
           <TextInput
             style={styles.input}
             placeholder="Add a caption"
@@ -72,11 +109,26 @@ export default function AddPostScreen() {
             onChangeText={setCaption}
             accessibilityLabel="Caption Input"
             accessibilityHint="Enter a caption for your post"
+            editable={!loading}
           />
-          <Pressable onPress={handleSave} style={styles.saveButton} accessibilityRole="button">
-            <Text style={styles.buttonText}>Save</Text>
+          <Pressable 
+            onPress={handleSave} 
+            style={[styles.saveButton, loading && styles.disabledButton]} 
+            accessibilityRole="button"
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="#FFFFFF" />
+            ) : (
+              <Text style={styles.buttonText}>Save</Text>
+            )}
           </Pressable>
-          <Pressable onPress={handleReset} style={styles.resetButton} accessibilityRole="button">
+          <Pressable 
+            onPress={() => { reset(); setCaption(""); isSubmitting.current = false; }} // reset
+            style={styles.resetButton} 
+            accessibilityRole="button"
+            disabled={loading}
+          >
             <Text style={styles.resetButtonText}>Reset</Text>
           </Pressable>
         </>
@@ -94,4 +146,5 @@ const styles = StyleSheet.create({
   buttonText: { color: "#fff", fontWeight: "bold", fontSize: 16 },
   resetButton: { backgroundColor: "#ECEDEE", padding: 12, borderRadius: 8, alignItems: "center", width: "60%" },
   resetButtonText: { color: "#000", fontSize: 16 },
+  disabledButton: { opacity: 0.5 },
 });

@@ -1,34 +1,54 @@
-import React, { useState } from "react";
-import { View, Text, Image, StyleSheet, Alert, Dimensions } from "react-native";
+import React, { useState, useEffect } from "react";
+import { 
+  View, Text, Image, StyleSheet, Dimensions, ActivityIndicator, RefreshControl, Alert 
+} from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import { favoritesFeed } from "@/placeholder";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
-import * as Haptics from "expo-haptics"; 
+import * as Haptics from "expo-haptics";
+import { useFavorites } from "@/context/FavoritesContext";
+
+import { Favorite } from "@/context/FavoritesContext";
 
 const screenWidth = Dimensions.get("window").width;
 const imageSize = screenWidth - 20;
 
 export default function FavoritesScreen() {
+  const { favorites, fetchFavorites, addFavorite, removeFavorite, isFavorite, refreshing, loading, loadMoreFavorites } = useFavorites();
   const [visibleCaptions, setVisibleCaptions] = useState<{ [key: string]: boolean }>({});
 
-  const handleLongPress = (id: string) => {
-    setVisibleCaptions((prevState) => {
-      return { ...prevState, [id]: !prevState[id] };
-    });
+  // Fetches favorites when the screen loads.
+  useEffect(() => {
+    fetchFavorites(true);
+  }, []);
 
+  // Toggles caption visibility when a post is long-pressed.
+  const handleLongPress = (id: string) => {
+    setVisibleCaptions((prevState) => ({
+      ...prevState,
+      [id]: !prevState[id],
+    }));
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   };
 
-  const handleDoubleTap = (id: string) => {
-    Alert.alert("Image Favorited", `You favorited image ${id}`);
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  // Handles double tap to toggle favorite status.
+  const handleDoubleTap = async (favId: string, postId: string, imageUrl: string, caption: string) => {
+    if (!isFavorite(postId)) {
+      await addFavorite(postId, imageUrl, caption);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      Alert.alert("Success", "Image added to favorites!");
+    } else {
+      await removeFavorite(favId);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      Alert.alert("Removed", "Image removed from favorites.");
+    }
   };
 
-  const renderItem = ({ item }: { item: { id: string; image: string; caption: string } }) => {
+  // Renders each favorite item with gesture detection.
+  const renderItem = ({ item }: { item: Favorite }) => {
     const doubleTapGesture = Gesture.Tap()
       .numberOfTaps(2)
       .runOnJS(true)
-      .onEnd(() => handleDoubleTap(item.id));
+      .onEnd(() => handleDoubleTap(item.id, item.postId, item.imageUrl, item.caption));
 
     const longPressGesture = Gesture.LongPress()
       .minDuration(500)
@@ -42,10 +62,10 @@ export default function FavoritesScreen() {
     return (
       <GestureDetector gesture={Gesture.Simultaneous(doubleTapGesture, longPressGesture)}>
         <View style={styles.imageContainer}>
-          <Image source={{ uri: item.image }} style={styles.image} resizeMode="cover" />
+          <Image source={{ uri: item.imageUrl }} style={styles.image} resizeMode="cover" />
           {visibleCaptions[item.id] && item.caption ? (
             <View style={styles.captionContainer}>
-              <Text style={styles.caption}>{item.caption || "No caption available"}</Text> 
+              <Text style={styles.caption}>{item.caption || "No caption available"}</Text>
             </View>
           ) : null}
         </View>
@@ -55,19 +75,29 @@ export default function FavoritesScreen() {
 
   return (
     <View style={styles.container}>
-      <FlashList 
-        data={favoritesFeed} 
-        renderItem={renderItem} 
-        keyExtractor={(item) => item.id} 
-        estimatedItemSize={imageSize} 
-        extraData={visibleCaptions}
-      />
+      {loading ? (
+        <ActivityIndicator size="large" color="#1ED2AF" />
+      ) : favorites.length === 0 ? (
+        <Text style={styles.emptyText}>No favorites yet.</Text>
+      ) : (
+        <FlashList
+          data={favorites}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          estimatedItemSize={imageSize}
+          extraData={visibleCaptions}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => fetchFavorites(true)} />}
+          onEndReached={loadMoreFavorites} // supports infinite scroll
+          onEndReachedThreshold={0.1}
+        />
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#ECEDEE", paddingHorizontal: 10 },
+  emptyText: { textAlign: "center", fontSize: 18, color: "#687076", marginTop: 20 },
   imageContainer: {
     marginBottom: 15,
     position: "relative",

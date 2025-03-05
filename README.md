@@ -1,14 +1,12 @@
 <div align="center">
 
-# Lumigram - Mobile Full Stack Part 1
+# Lumigram - Mobile Full Stack
 ![A stylish and charismatic pug sitting in a trendy café, using a smartphone to interact with social media  The pug is wearing fashionable accessories l](https://github.com/user-attachments/assets/cc462df9-86ac-4e53-a321-a483cee81e0b)
 
 
 ## Project Overview
 
-This project is **Lumigram**, an Instagram clone built with React Native using Expo. Part 1 focuses on building the frontend using React Native, while Part 2 will integrate Firebase as the backend.
-
-
+This project is **Lumigram**, an Instagram clone built with React Native using Expo. Part 1 focuses on building the frontend using React Native, while Part 2 integrates Firebase as the backend.
 
 </div>
 

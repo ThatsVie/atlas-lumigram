@@ -8,8 +8,13 @@ export function useImagePicker() {
 
   useEffect(() => {
     async function requestPermissions() {
-      const { status } = await MediaLibrary.requestPermissionsAsync();
-      setPermissionGranted(status === "granted");
+      const { status } = await MediaLibrary.getPermissionsAsync();
+      if (status !== "granted") {
+        const { status: newStatus } = await MediaLibrary.requestPermissionsAsync();
+        setPermissionGranted(newStatus === "granted");
+      } else {
+        setPermissionGranted(true);
+      }
     }
 
     requestPermissions();
@@ -25,17 +30,18 @@ export function useImagePicker() {
       setPermissionGranted(true);
     }
 
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
     });
 
-    if (!result.canceled) {
+    if (!result.canceled && result.assets?.length > 0) {
       setImage(result.assets[0].uri);
     }
   }
+
 
   function reset() {
     setImage(undefined);

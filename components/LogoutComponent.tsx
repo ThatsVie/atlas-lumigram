@@ -1,14 +1,17 @@
-import { Pressable } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import * as Haptics from 'expo-haptics';
+import { Pressable } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import * as Haptics from "expo-haptics";
+import { useAuth } from "@/context/AuthProvider";
 
 export default function LogoutComponent() {
+  const { logout } = useAuth();
   const router = useRouter();
 
-  function handleLogout() {
+  async function handleLogout() {
+    await logout();
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    router.replace('/login');
+    router.replace("/login");
   }
 
   return (

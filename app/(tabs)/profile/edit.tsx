@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { View, Text, TextInput, Pressable, Image, StyleSheet } from "react-native";
+import { 
+  View, Text, TextInput, Pressable, Image, 
+  StyleSheet, ActivityIndicator, Alert 
+} from "react-native";
 import { useRouter } from "expo-router";
 import { useImagePicker } from "@/hooks/useImagePicker";
 import { useProfile } from "@/context/ProfileContext";
@@ -7,23 +10,34 @@ import { useProfile } from "@/context/ProfileContext";
 export default function EditProfileScreen() {
   const router = useRouter();
   const { image, openImagePicker } = useImagePicker();
-  const { username, setUsername, profileImage, setProfileImage } = useProfile();
+  const { username, setUsername, profileImage, setProfileImage, loading } = useProfile();
   const [tempUsername, setTempUsername] = useState(username);
+  const [saving, setSaving] = useState(false);
 
-  function handleSave() {
-    setUsername(tempUsername);
-    if (image) {
-      setProfileImage(image);
+  async function handleSave() {
+    if (!tempUsername.trim()) {
+      Alert.alert("Error", "Username cannot be empty.");
+      return;
     }
-    alert("Profile Updated!");
-    router.push("/profile");
+
+    setSaving(true);
+    try {
+      await setUsername(tempUsername.trim());
+      if (image) await setProfileImage(image);
+      Alert.alert("Success", "Profile Updated!");
+      router.push("/profile");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      Alert.alert("Error", "Failed to update profile. Please try again.");
+    }
+    setSaving(false);
   }
 
   return (
     <View style={styles.container}>
       <Pressable onPress={openImagePicker}>
         <Image
-          source={image ? { uri: image } : { uri: profileImage }}
+          source={{ uri: image || profileImage }}
           style={styles.profileImage}
           accessibilityRole="imagebutton"
           accessibilityLabel="Change Profile Picture"
@@ -36,8 +50,8 @@ export default function EditProfileScreen() {
         placeholder="Enter username"
         placeholderTextColor="#687076"
       />
-      <Pressable onPress={handleSave} style={styles.saveButton}>
-        <Text style={styles.buttonText}>Save profile</Text>
+      <Pressable onPress={handleSave} style={styles.saveButton} disabled={saving || loading}>
+        {saving ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.buttonText}>Save profile</Text>}
       </Pressable>
     </View>
   );

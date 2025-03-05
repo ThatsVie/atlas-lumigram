@@ -1,22 +1,23 @@
-import { Stack } from "expo-router";
+import { Slot } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StyleSheet } from "react-native";
 import { ProfileProvider } from "@/context/ProfileContext";
 import { PostProvider } from "@/context/PostContext";
+import { AuthProvider } from "@/context/AuthProvider";
+import { FavoritesProvider } from "@/context/FavoritesContext";
 
 export default function RootLayout() {
   return (
     <GestureHandlerRootView style={styles.container}>
-      <ProfileProvider>
-        <PostProvider>
-          <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="login" options={{ headerShown: false }} />
-            <Stack.Screen name="register" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          </Stack>
-        </PostProvider>
-      </ProfileProvider>
+      <AuthProvider>
+        <ProfileProvider>
+          <PostProvider>
+            <FavoritesProvider>
+              <Slot />
+            </FavoritesProvider>
+          </PostProvider>
+        </ProfileProvider>
+      </AuthProvider>
     </GestureHandlerRootView>
   );
 }

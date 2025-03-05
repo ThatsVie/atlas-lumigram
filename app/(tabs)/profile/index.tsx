@@ -1,8 +1,11 @@
 import { useRouter } from "expo-router";
-import { View, Text, Image, Pressable, StyleSheet, FlatList, Dimensions } from "react-native";
-import { profileFeed } from "@/placeholder";
+import { 
+  View, Text, Image, Pressable, StyleSheet, FlatList, Dimensions, ActivityIndicator 
+} from "react-native";
 import { useProfile } from "@/context/ProfileContext";
-import { usePosts } from "@/context/PostContext";
+import { useAuth } from "@/context/AuthProvider";
+import { getUserPosts } from "@/lib/firestore";
+import { useEffect, useState } from "react";
 
 const screenWidth = Dimensions.get("window").width;
 const imageSize = screenWidth / 3;
@@ -10,25 +13,47 @@ const imageSize = screenWidth / 3;
 export default function ProfileScreen() {
   const router = useRouter();
   const { profileImage, username } = useProfile();
-  const { posts } = usePosts();
+  const { user } = useAuth();
+  const [posts, setPosts] = useState<{ id: string; imageUrl: string; caption?: string }[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const combinedPosts = [...posts, ...profileFeed];
+  useEffect(() => {
+    async function fetchPosts() {
+      if (!user) return;
+      setLoading(true);
+      try {
+        const { posts } = await getUserPosts(user.uid, null);
+        setPosts(posts);
+      } catch (error) {
+        console.error("Error fetching user posts:", error);
+      }
+      setLoading(false);
+    }
+
+    fetchPosts();
+  }, [user]);
 
   return (
     <View style={styles.container}>
-      <Pressable onPress={() => router.push("/profile/edit")} style={styles.profileSection} accessibilityRole="button">
+      <Pressable 
+        onPress={() => router.push("/profile/edit")} 
+        style={styles.profileSection} 
+        accessibilityRole="button"
+      >
         <Image source={{ uri: profileImage }} style={styles.profileImage} />
       </Pressable>
       <Text style={styles.username}>{username}</Text>
 
-      {combinedPosts.length === 0 ? (
+      {loading ? (
+        <ActivityIndicator size="large" color="#1ED2AF" />
+      ) : posts.length === 0 ? (
         <Text style={styles.emptyText}>No posts yet. Add some!</Text>
       ) : (
         <FlatList
-          data={combinedPosts}
+          data={posts}
           renderItem={({ item }) => (
             <Image
-              source={{ uri: item.image }}
+              source={{ uri: item.imageUrl }}
               style={styles.image}
               resizeMode="cover"
               accessibilityLabel={`Post: ${item.caption || "No caption"}`}
