@@ -9,6 +9,7 @@ import * as Haptics from "expo-haptics";
 import { useAuth } from "@/context/AuthProvider";
 import { usePosts } from "@/context/PostContext";
 import { useFavorites } from "@/context/FavoritesContext";
+import { useRouter } from "expo-router";
 
 const screenWidth = Dimensions.get("window").width;
 const imageSize = screenWidth - 20;
@@ -17,32 +18,44 @@ export default function HomeScreen() {
   const { homeFeed, fetchHomeFeed, loading } = usePosts();
   const { addFavorite, removeFavorite, isFavorite } = useFavorites();
   const { user } = useAuth();
+  const router = useRouter();
   const [visibleCaption, setVisibleCaption] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const listRef = useRef<FlashList<any>>(null);
 
-  // Fetches posts when the screen loads and when the user changes.
+  // Redirect to login screen if not authenticated
+  useEffect(() => {
+    if (!user) {
+      console.warn("User not authenticated. Redirecting to login...");
+      router.replace("/login"); // Redirects immediately to login
+      return;
+    }
+  }, [user]);
+
+  // Fetch posts only if the user is authenticated
   useEffect(() => {
     async function loadFeed() {
+      if (!user) return;
+
       setInitialLoading(true);
-      if (user) {
-        console.log("Fetching home feed for user:", user.uid);
-        await fetchHomeFeed(true);
-      }
+      console.log("Fetching home feed for user:", user.uid);
+      await fetchHomeFeed(true);
       setInitialLoading(false);
     }
+
     loadFeed();
   }, [user]);
 
-  // Pull-to-refresh-Fetch new posts when user pulls down.
+  // Pull-to-refresh: Fetch new posts when user pulls down.
   async function handleRefresh() {
+    if (!user) return;
     setRefreshing(true);
     await fetchHomeFeed(true);
     setRefreshing(false);
   }
 
-  // Toggles caption visibility when a post is long-pressed and scrolls it into view
+  // Toggles caption visibility when a post is long-pressed and scrolls it into view.
   const handleLongPress = (id: string, index: number) => {
     console.log(`Long press triggered for post ID: ${id} at index ${index}`);
 
@@ -75,7 +88,7 @@ export default function HomeScreen() {
     Alert.alert("Added", "Post added to favorites.");
   };
 
-  // Renders each post with gestures
+  // Renders each post with gestures.
   const renderItem = ({ item, index }: { item: { id: string; imageUrl: string; caption: string }; index: number }) => {
     const doubleTapGesture = Gesture.Tap()
       .numberOfTaps(2)
@@ -111,17 +124,14 @@ export default function HomeScreen() {
     );
   };
 
+  // If the user is not logged in, dont render anything
+  if (!user) return null;
+
   return (
     <View style={styles.container}>
-      {user ? (
-        <Text style={styles.userEmail}>Logged in as: {user.email}</Text>
-      ) : (
-        <Text style={styles.userEmail}>Please log in to view posts.</Text>
-      )}
-
-      {initialLoading && <ActivityIndicator size="large" color="#1ED2AF" style={styles.loadingIndicator} />}
-
-      {!initialLoading && homeFeed.length === 0 ? (
+      {initialLoading ? (
+        <ActivityIndicator size="large" color="#1ED2AF" style={styles.loadingIndicator} />
+      ) : homeFeed.length === 0 ? (
         <Text style={styles.noPostsText}>No posts yet. Start by uploading one!</Text>
       ) : (
         <FlashList
@@ -132,8 +142,8 @@ export default function HomeScreen() {
           keyExtractor={(item) => item.id}
           estimatedItemSize={imageSize}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-          onEndReached={() => fetchHomeFeed(false)} // infinite scrolling
-          onEndReachedThreshold={0.1} //Fetch more when close to bottom
+          onEndReached={() => fetchHomeFeed(false)} // Infinite scrolling for logged-in users
+          onEndReachedThreshold={0.1}
         />
       )}
     </View>
@@ -142,7 +152,6 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#ECEDEE", paddingHorizontal: 10 },
-  userEmail: { fontSize: 16, fontWeight: "bold", color: "#1ED2AF", textAlign: "center", marginVertical: 10 },
   loadingIndicator: { marginTop: 20 },
   noPostsText: { textAlign: "center", fontSize: 16, color: "#687076", marginTop: 20 },
   imageContainer: {
