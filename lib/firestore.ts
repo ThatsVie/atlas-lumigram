@@ -1,10 +1,11 @@
-import { db } from "@/firebaseConfig";
+import { db, storage } from "@/firebaseConfig";
 import {
   collection, addDoc, getDocs, getDoc, setDoc, updateDoc,
   deleteDoc, query, where, orderBy,
   serverTimestamp, doc, DocumentData,
   startAfter, limit,
 } from "firebase/firestore";
+import { ref, deleteObject } from "firebase/storage";
 
 export type Post = {
   id: string;
@@ -259,9 +260,33 @@ export async function checkIfFavorite(userId: string, postId: string): Promise<b
   }
 }
 
+
+// Deletes a post from Firestore and removes the image from Firebase Storage.
+
+export async function deletePost(postId: string, imageUrl: string): Promise<void> {
+  try {
+    console.log(`Deleting post: ${postId}`);
+
+    // Delete post from Firestore
+    await deleteDoc(doc(db, "posts", postId));
+    console.log(`Post ${postId} deleted from Firestore.`);
+
+    // Delete image from Firebase Storage
+    if (imageUrl) {
+      const imageRef = ref(storage, imageUrl);
+      await deleteObject(imageRef);
+      console.log(`Image deleted from storage: ${imageUrl}`);
+    }
+  } catch (error) {
+    console.error("Error deleting post:", error);
+    throw new Error("Failed to delete post.");
+  }
+}
+
 export default {
   createPost, getUserPosts, getHomeFeed,
   addFavoriteToFirestore, removeFavoriteFromFirestore,
   getUserFavorites, checkIfFavorite,
   getUserProfile, updateUserProfile, searchUsersByUsername,
+  deletePost,
 };

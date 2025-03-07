@@ -1,19 +1,31 @@
 import { useState, useEffect } from "react";
 import { useLocalSearchParams } from "expo-router";
-import { 
-  View, Text, Image, FlatList, StyleSheet, Dimensions, ActivityIndicator, Alert
+import {
+  View,
+  Text,
+  Image,
+  FlatList,
+  StyleSheet,
+  Dimensions,
+  ActivityIndicator,
+  Alert,
+  Pressable,
 } from "react-native";
 import { collection, doc, getDoc, query, where, getDocs, orderBy } from "firebase/firestore";
 import { db } from "@/firebaseConfig";
+import ImageModal from "@/components/ImageModal";
+import { useAuth } from "@/context/AuthProvider";
 
 const screenWidth = Dimensions.get("window").width;
 const imageSize = screenWidth / 3;
 
 export default function UserProfile() {
   const { id } = useLocalSearchParams();
-  const [user, setUser] = useState<{ username: string; profileImage: string } | null>(null);
-  const [posts, setPosts] = useState<{ id: string; imageUrl: string }[]>([]);
+  const { user } = useAuth();
+  const [profileUser, setProfileUser] = useState<{ username: string; profileImage: string } | null>(null);
+  const [posts, setPosts] = useState<{ id: string; imageUrl: string; userId: string }[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState<{ imageUrl: string; postId: string; userId: string } | null>(null);
 
   useEffect(() => {
     async function fetchUserProfile() {
@@ -29,9 +41,9 @@ export default function UserProfile() {
         const userSnap = await getDoc(userRef);
         if (userSnap.exists()) {
           const userData = userSnap.data() as { username: string; profileImage: string };
-          setUser(userData);
+          setProfileUser(userData);
         } else {
-          setUser(null);
+          setProfileUser(null);
         }
 
         // Fetch user posts
@@ -40,7 +52,7 @@ export default function UserProfile() {
         const postSnapshots = await getDocs(q);
         const userPosts = postSnapshots.docs.map((doc) => ({
           id: doc.id,
-          ...(doc.data() as { imageUrl: string }),
+          ...(doc.data() as { imageUrl: string; userId: string }),
         }));
 
         setPosts(userPosts);
@@ -65,17 +77,19 @@ export default function UserProfile() {
 
   return (
     <View style={styles.container}>
-      {user ? (
+      {profileUser ? (
         <>
-          <Image source={{ uri: user.profileImage }} style={styles.profileImage} />
-          <Text style={styles.username}>{user.username}</Text>
+          <Image source={{ uri: profileUser.profileImage }} style={styles.profileImage} />
+          <Text style={styles.username}>{profileUser.username}</Text>
           {posts.length === 0 ? (
             <Text style={styles.emptyText}>No posts yet.</Text>
           ) : (
             <FlatList
               data={posts}
               renderItem={({ item }) => (
-                <Image source={{ uri: item.imageUrl }} style={styles.image} resizeMode="cover" />
+                <Pressable onPress={() => setSelectedImage({ imageUrl: item.imageUrl, postId: item.id, userId: item.userId })}>
+                  <Image source={{ uri: item.imageUrl }} style={styles.image} resizeMode="cover" />
+                </Pressable>
               )}
               keyExtractor={(item) => item.id}
               numColumns={3}
@@ -85,6 +99,15 @@ export default function UserProfile() {
       ) : (
         <Text style={styles.errorText}>User not found.</Text>
       )}
+
+      {/* Image Modal for Enlarged View */}
+      <ImageModal
+        visible={!!selectedImage}
+        imageUrl={selectedImage?.imageUrl || null}
+        postId={selectedImage?.postId || ""}
+        userId={selectedImage?.userId || ""}
+        onClose={() => setSelectedImage(null)}
+      />
     </View>
   );
 }

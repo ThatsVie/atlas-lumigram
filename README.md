@@ -16,6 +16,8 @@ This project is **Lumigram**, an Instagram clone built with React Native using E
 
 - [Resources](#resources)
 - [Learning Objectives](#learning-objectives)
+- [Usage Instructions](#usage-instructions)
+- [App Features](#app-features)
 - [Task 0: Getting Started](#task-0-getting-started)
 - [Troubleshooting Connectivity Issues](#troubleshooting-connectivity-issues)
 - [Task 1: Application Routing](#task-1-application-routing)
@@ -25,11 +27,18 @@ This project is **Lumigram**, an Instagram clone built with React Native using E
 - [Task 5: Favorites Tab](#task-5-favorites-tab)
 - [Task 6: Profile Tab](#task-6-profile-tab)
 - [Task 7: Search Tab](#task-7-search-tab)
+- [Task 8: Authentication (Firebase Integration)](#task-8-authentication-firebase-integration)  
+- [Task 9: Add Post](#task-9-add-post)  
+- [Task 10: Home Feed](#task-10-home-feed)  
+- [Task 11: Gestures](#task-11-gestures)  
+- [Task 12: Favorites Feed](#task-12-favorites-feed)  
+- [Task 13: User Profile](#task-13-user-profile)  
+- [Task 14: User Search](#task-14-user-search)  
 - [Reflection](#reflection)
 
 ---
 
-## **Resources**
+## Resources
 
 ### **Watch**
 - **React Native in 100 Seconds**  
@@ -87,9 +96,140 @@ This project is **Lumigram**, an Instagram clone built with React Native using E
 
 ---
 
+##  Usage Instructions
+
+### 1. Cloning the Repository
+To get started with the project, clone the repository from GitHub:
+
+```bash
+git clone https://github.com/ThatsVie/atlas-lumigram.git
+```
+
+Then navigate into the project directory:
+
+```bash
+cd atlas-lumigram
+```
+
+---
+
+### 2. Installing Dependencies
+Ensure you have **Node.js** installed. Then, install the required dependencies:
+
+```bash
+npm install
+```
+
+---
+
+### 3. Setting Up Expo
+This project uses [Expo](https://expo.dev/), a framework for building React Native apps. If you haven’t installed Expo globally, do so with:
+
+```bash
+npm install -g expo-cli
+```
+
+Alternatively, you can use `npx` to run Expo without installing it globally.
+
+---
+
+### 4. Running the Project
+To start the project locally, use the following command:
+
+```bash
+npx expo start
+```
+
+If you are running on a physical device and facing connectivity issues, use **tunnel mode**:
+
+```bash
+npx expo start --tunnel
+```
+
+This will generate a QR code you can scan using the **Expo Go** app (available on iOS and Android) to run the app on your mobile device.
+
+
+---
+
+## App Features 
+
+### 1. Creating an Account & Logging In
+- When you first open the app, you'll be prompted to **log in** or **register a new account**.
+- After successful login, you will be redirected to the **Home Feed**.
+
+---
+
+### 2. Adding a Post
+- Navigate to the **Add Post tab**.
+- Select an image from your device.
+- Enter a caption.
+- Press **Save** to upload your post.
+- Your post will now appear in the **Home Feed** and your **Profile Feed**.
+
+---
+
+### 3. Home Feed: Viewing & Interacting with Posts
+- The **Home Feed** displays posts from all users in **reverse chronological order** (newest first).
+- **Long Press** on a post to **see its caption**.
+- **Double Tap** on a post to **add it to favorites**.
+
+---
+
+### 4. Favorites Tab
+- The **Favorites tab** shows the posts you've favorited.
+- **Double Tap** a post to **remove it from favorites**.
+
+---
+
+### 5. Profile Tab
+- The **Profile tab** displays your profile picture, username, and all your posts.
+- **Press on a post** to **enlarge it**.
+- **Tap the trash can icon** in the enlarged view to **delete a post**.
+- **Only you can delete your own posts**.
+- **Tap on your profile image to change it.**
+  - The default profile picture is of a **dog**.
+  - Clicking on the image will allow you to select a new profile picture from your device.
+- **Tap on your username to edit it.**
+  - Enter a new username and save the changes.
+
+---
+
+### **6. Searching for Users**
+- Navigate to the **Search tab**.
+- Enter a **username** in the search bar.
+- The results will update dynamically as you type.
+- Clicking on a user will take you to their **profile and posts**.
+- **You cannot edit or delete another user's posts**.
+- **You can press on their posts to enlarge them**, but there will be no delete button.
+- **TIP:** Searching for **"t"** will display most of the current accounts, as many usernames contain the letter "t".
+
+---
+
+### **7. Logging Out**
+- Press the **Logout button** in the top right corner.
+- This will **clear your session** and redirect you to the login screen.
+
+---
+
+## 🎯 Troubleshooting & Tips
+
+- **App not connecting?** Try running `npx expo start --tunnel` if your device is not on the same network as your computer.
+
+- **Gestures not working?** Ensure you're using the correct gestures:
+  - **Long Press (Home Feed)**: Show caption.
+  - **Double Tap (Home Feed & Favorites)**: Add/remove favorite.
+  - **Press to Enlarge (Profile & User Profile Feeds)**: Enlarge post.
+  - **Trash Can Icon (Profile Feed)**: Delete your own post.
+  - **Tap Profile Picture (Profile Tab)**: Change profile image.
+  - **Tap Username (Profile Tab)**: Edit username.
+
+---
+
+
 ## Task 0: Getting Started
 
 ### Resources
+
 - **Setting Up Your Environment:**  
   [Expo Environment Setup](https://docs.expo.dev/get-started/set-up-your-environment/)
 
@@ -376,7 +516,7 @@ Another issue was that long press and double tap gestures were interfering with 
 
 ## Task 6: Profile Tab
 
-### **What I Did**
+### What I Did
 
 1. **Updated Profile Tab (`profile/index.tsx`)**
 - Displays profile picture and username.
@@ -412,7 +552,7 @@ Another issue was that long press and double tap gestures were interfering with 
 
 ---
 
-## **Task 7: Search Tab**
+## Task 7: Search Tab
 
 ### What I Did
 
@@ -426,8 +566,217 @@ Another issue was that long press and double tap gestures were interfering with 
 - Clicking a user in the search results navigates to `/profile/[id]`.
 - Updated `profile/[id].tsx` to load the correct user profile dynamically.
 
+---
+
+## Task 8: Authentication (Firebase Integration) 
+
+#### Resources  
+- **React Native: Firebase Authentication**  
+  [Watch Video](https://www.loom.com/share/630ecd3e27554c60baeda84f1f23ff02?sid=33b89349-d4c7-474e-98d8-37ba3b132f53) – Walkthrough of Firebase Authentication integration in React Native.  
+- **Firebase Auth Getting Started**  
+  [Firebase Documentation](https://firebase.google.com/docs/auth/web/start) – Official Firebase guide for setting up authentication.  
 
 ---
+
+### What I Did 
+
+1. **Integrated Firebase Authentication**  
+   - Configured Firebase Authentication in the project.  
+   - Used **`firebase/auth`** to handle user authentication.  
+   - Ensured authentication state persistence for better user experience.  
+
+2. **Implemented Login Functionality**  
+   - Users can log in using a **valid email and password**.  
+   - Upon successful login, the user is redirected to the **Home tab**.  
+   - If login fails (e.g., wrong credentials), an error message is displayed.  
+
+3. **Implemented User Registration**  
+   - Users can register a **new email and password**.  
+   - Upon successful registration, the user is automatically logged in and redirected to the **Home tab**.  
+   - The user’s profile is initialized in Firestore with a **default username and profile image**.  
+
+4. **Implemented Logout Functionality**  
+   - Clicking the logout button **clears the session** and redirects the user back to the **Login screen**.  
+   - Used **`signOut`** from Firebase Authentication to properly end the session.  
+   - Ensured session cleanup in **AsyncStorage** to prevent unintended automatic login.  
+
+---
+
+## Task 9: Add Post  
+
+### Resources  
+- **React Native: Firebase Storage, Firestore**  
+  [Watch Video](https://www.loom.com/share/65f2b08e1de6406e935ca69cd844a41b?sid=ef2564a8-7dee-41c7-9699-cfa221ea7b81) – Walkthrough of Firebase Storage and Firestore integration.  
+- **Firebase Storage: Upload Files**  
+  [Firebase Documentation](https://firebase.google.com/docs/storage/web/upload-files) – Official Firebase guide on uploading files to storage.  
+- **Firestore: Add Documents**  
+  [Firestore Documentation](https://firebase.google.com/docs/firestore/manage-data/add-data#add_a_document) – Guide for adding structured data to Firestore.  
+
+---
+
+### What I Did  
+
+1. **Implemented Image Uploading to Firebase Storage**  
+   - Used **`expo-image-picker`** to allow users to select an image from their device.  
+   - Uploaded the selected image to **Firebase Storage** under `posts/{userId}/{timestamp}.jpg`.  
+   - Retrieved the **download URL** after a successful upload.  
+
+2. **Stored Post Metadata in Firestore**  
+   - Created a **new document in Firestore** under the `posts` collection.  
+   - Stored the following details:  
+     - **Image URL** (from Firebase Storage)  
+     - **Caption text**  
+     - **Timestamp** (created at)  
+     - **User ID** (who created the post)  
+
+3. **Created the Add Post Screen**  
+   - Users can **select an image** using `expo-image-picker`.  
+   - After selecting an image, a **caption input field** appears.  
+   - A **"Post" button** uploads the image and saves the post in Firestore.  
+   - Displayed a **success notification** once the post is created.  
+
+4. **Ensured Data Consistency**  
+   - Prevented duplicate uploads by disabling the **"Post" button** while uploading.  
+   - Ensured **users cannot post without selecting an image and entering a caption**.  
+   - Used **state management** to track upload progress.  
+
+---
+
+## Task 10: Home Feed 
+
+### Resources  
+- **Firestore: Querying Data**  
+  [Firestore Queries Documentation](https://firebase.google.com/docs/firestore/query-data/queries) – Guide on fetching and filtering data in Firestore.  
+- **Firestore: Order and Limit Data for Pagination**  
+  [Firestore Pagination Documentation](https://firebase.google.com/docs/firestore/query-data/order-limit-data) – Explains how to implement efficient data pagination.  
+
+---
+
+### What I Did  
+
+1. **Fetched Posts from Firestore in Chronological Order**  
+   - Updated the **home feed** to fetch posts from the Firestore `posts` collection.  
+   - Ordered posts by `createdAt` in **descending order** to display the newest posts first.  
+   - Ensured that only **published posts** are displayed to users.  
+
+2. **Implemented Pull-to-Refresh Functionality**  
+   - Used **FlashList with RefreshControl** to allow users to **pull down to refresh the feed**.  
+   - When refreshed, the app **fetches the latest posts** from Firestore.  
+
+3. **Implemented Infinite Scroll Pagination**  
+   - Used Firestore’s **pagination techniques** to fetch posts in batches.  
+   - Loaded the **first 10 posts** initially.  
+   - When the user **scrolls to the bottom**, the next batch of posts is fetched.  
+   - Used **startAfter(lastVisibleDoc)** to ensure new posts are **appended without duplicates**.  
+
+4. **Ensured Real-Time Updates for New Posts**  
+   - Subscribed to **real-time Firestore updates** with `onSnapshot()`.  
+   - Any newly created post **automatically appears** without requiring a manual refresh.  
+
+---
+
+## Task 11: Gestures  
+
+
+### What I Did
+
+1. **Implemented Double Tap Gesture to Add Favorites**  
+   - Used **React Native Gesture Handler** to detect **double-tap interactions**.  
+   - When double-tapped:  
+     - The post’s ID, image URL, and caption are stored in **Firestore's `favorites` collection**.  
+     - The favorite is **associated with the logged-in user**.   
+   - Added **Haptic feedback (Success Notification)** to confirm the favorite action.  
+
+2. **Implemented Long Press Gesture to Show Captions**  
+   - Used **Long Press Gesture** to toggle captions over post images.  
+   - If a post has a caption, **long pressing reveals it** in an overlay.  
+   - The caption disappears when the user **long presses again**.  
+   - Used **semi-transparent background styling** for readability.  
+
+---
+
+## Task 12: Favorites Feed 
+
+
+### What I Did 
+
+1. **Implemented Favorites Storage in Firestore**  
+   - Created a **favorites collection** in Firestore.  
+   - When a user **double taps** a post, the post’s **ID, image URL, and caption** are saved to Firestore under the **logged-in user’s favorites list**.  
+   - Added a **checkIfFavorite function** to prevent duplicate favorites.  
+
+2. **Fetched User’s Favorited Posts**  
+   - Used **Firestore queries** to retrieve only the **favorited posts** of the logged-in user.  
+   - Implemented a **real-time listener (`onSnapshot`)** to **sync the favorites feed live** when posts are added or removed.  
+
+3. **Implemented Pull-to-Refresh for Favorites**  
+   - Used **`RefreshControl`** in the `FlashList` to allow users to **pull down** and manually refresh their favorites feed.  
+   - When the user refreshes, the app **fetches the latest favorites from Firestore**.  
+
+4. **Implemented Pagination for Infinite Scrolling**  
+   - When the user **scrolls to the bottom**, the next batch of **favorited posts** is **automatically fetched**.  
+   - Used **`startAfter`** in Firestore queries to load more posts dynamically.  
+   - Ensured **efficient performance** by limiting the number of posts fetched at a time.  
+
+---
+
+## Task 13: User Profile 
+
+### What I Did 
+
+1. **Implemented User Profile Display**  
+   - Fetched the **logged-in user's profile data** from Firestore.  
+   - Displayed the **profile image and username** at the top of the profile screen.  
+   - Implemented a **grid layout using `FlatList`** to show all posts made by the user.  
+
+2. **Added Profile Editing Functionality**  
+   - Implemented an **Edit Profile screen** (`profile/edit.tsx`).  
+   - Allowed users to **update their username**, which is stored in **Firestore**.  
+   - Allowed users to **change their profile image** using `expo-image-picker`.  
+   - **Uploaded new profile images to Firebase Storage** and updated Firestore with the image URL.  
+
+3. **Enabled Image Enlarging on Click**  
+   - Implemented an **image modal** that allows users to click on any post to view it in a **larger size**.  
+   - Clicking on an image **opens a full-screen modal**, displaying the **post at 80% of the screen width**.  
+   - Users can **tap outside the image to close the modal**.  
+
+4. **Implemented Real-Time Profile Updates**  
+   - Subscribed to Firestore updates so that **changes to the profile image and username reflect immediately**.  
+   - Used `onSnapshot` to **sync the user’s posts in real-time**, ensuring the profile feed updates automatically when new posts are added.  
+
+5. **Implemented Pull-to-Refresh for Profile Posts**  
+   - Added a **pull-to-refresh feature** to allow users to manually refresh their profile feed.  
+   - Fetches the **latest posts from Firestore** when refreshed.  
+
+---
+
+## Task 14: User Search
+
+## What I Did  
+
+1. **Implemented Real-Time User Search**  
+   - Used Firestore’s **querying capabilities** to **filter usernames dynamically**.  
+   - As the user types, the **search results update in real time** to show matching users.  
+   - Limited the number of results to **10 users per search** for efficiency.  
+
+2. **Displayed Usernames and Profile Images**  
+   - Retrieved **profile images and usernames** from Firestore for each matching result.  
+   - Used `FlatList` to **display the results in a scrollable list**.  
+
+3. **Enabled Profile Navigation**  
+   - Clicking on a **search result** navigates to the selected user’s profile page.  
+   - Used **dynamic routing** with `profile/[id].tsx` to load the correct profile.  
+
+4. **Restricted Profile Editing**  
+   - If a user visits their **own profile**, they can edit it.  
+   - If a user visits **someone else’s profile**, the edit options are **hidden**.  
+   - Ensured the **profile screen layout remains consistent** for all users.  
+
+---
+
+
+
+
 
 
 ## Reflection

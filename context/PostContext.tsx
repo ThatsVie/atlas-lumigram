@@ -82,7 +82,7 @@ export function PostProvider({ children }: { children: ReactNode }) {
 
     try {
       setLoading(true);
-      console.log("🔄 Uploading image...");
+      console.log("Uploading image...");
 
       // Upload image to Firebase Storage and get the image URL
       const imageUrl = await uploadImage(userId, imageUri);

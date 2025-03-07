@@ -1,36 +1,71 @@
-import { useState, useEffect } from "react";
-import { 
-  View, Text, Image, Pressable, StyleSheet, 
-  FlatList, Dimensions, ActivityIndicator, RefreshControl, Modal, TouchableOpacity 
+import { useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  Pressable,
+  StyleSheet,
+  FlatList,
+  Dimensions,
+  RefreshControl,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useProfile } from "@/context/ProfileContext";
 import { useAuth } from "@/context/AuthProvider";
+import ImageModal from "@/components/ImageModal";
+import { deletePost } from "@/lib/firestore";
+import * as Haptics from "expo-haptics"; // ✅ Import Haptics
 
 const screenWidth = Dimensions.get("window").width;
 const imageSize = screenWidth / 3;
-const enlargedSize = screenWidth * 0.8;
 
 export default function ProfileScreen() {
   const router = useRouter();
   const { profileImage, username, posts, refreshProfilePosts } = useProfile();
   const { user } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<{ imageUrl: string; postId: string; userId: string } | null>(null);
 
-  // pull-to-refresh action
+  // Pull-to-refresh action
   async function handleRefresh() {
     setRefreshing(true);
     await refreshProfilePosts();
     setRefreshing(false);
   }
 
+  // Handle post deletion with haptic feedback
+  async function handleDeletePost(postId: string, imageUrl: string) {
+    Alert.alert(
+      "Delete Post",
+      "Are you sure you want to delete this post? This action cannot be undone.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await deletePost(postId, imageUrl);
+              await refreshProfilePosts(); // Refresh after deletion
+              await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); // ✅ Haptic success feedback
+              Alert.alert("Success", "Post deleted.");
+            } catch (error) {
+              await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error); // ❌ Haptic error feedback
+              Alert.alert("Error", "Failed to delete the post. Please try again.");
+            }
+          },
+        },
+      ]
+    );
+  }
+
   return (
     <View style={styles.container}>
       {/* Profile Info */}
-      <Pressable 
-        onPress={() => router.push("/profile/edit")} 
-        style={styles.profileSection} 
+      <Pressable
+        onPress={() => router.push("/profile/edit")}
+        style={styles.profileSection}
         accessibilityRole="button"
       >
         <Image source={{ uri: profileImage }} style={styles.profileImage} />
@@ -44,7 +79,7 @@ export default function ProfileScreen() {
         <FlatList
           data={posts}
           renderItem={({ item }) => (
-            <Pressable onPress={() => setSelectedImage(item.imageUrl)}>
+            <Pressable onPress={() => setSelectedImage({ imageUrl: item.imageUrl, postId: item.id, userId: user?.uid || "" })}>
               <Image
                 source={{ uri: item.imageUrl }}
                 style={styles.image}
@@ -55,20 +90,19 @@ export default function ProfileScreen() {
           )}
           keyExtractor={(item) => item.id}
           numColumns={3}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-          }
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         />
       )}
 
       {/* Image Modal for Enlarged View */}
-      <Modal visible={!!selectedImage} transparent animationType="fade">
-        <View style={styles.modalBackground}>
-          <TouchableOpacity onPress={() => setSelectedImage(null)} style={styles.modalCloseArea}>
-            <Image source={{ uri: selectedImage! }} style={styles.enlargedImage} />
-          </TouchableOpacity>
-        </View>
-      </Modal>
+      <ImageModal
+        visible={!!selectedImage}
+        imageUrl={selectedImage?.imageUrl || null}
+        postId={selectedImage?.postId || ""}
+        userId={selectedImage?.userId || ""}
+        onClose={() => setSelectedImage(null)}
+        refreshPosts={refreshProfilePosts}
+      />
     </View>
   );
 }
@@ -80,7 +114,4 @@ const styles = StyleSheet.create({
   username: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
   emptyText: { fontSize: 16, color: "#687076", marginTop: 20 },
   image: { width: imageSize, height: imageSize },
-  modalBackground: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.8)" },
-  modalCloseArea: { width: "100%", height: "100%", justifyContent: "center", alignItems: "center" },
-  enlargedImage: { width: enlargedSize, height: enlargedSize, borderRadius: 10 },
 });
