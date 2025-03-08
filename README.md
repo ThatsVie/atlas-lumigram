@@ -775,9 +775,9 @@ Another issue was that long press and double tap gestures were interfering with 
 
 ---
 
-
-
-
-
-
 ## Reflection
+Developing Lumigram was a valuable experience that deepened my understanding of React Native, Firebase, and mobile app development. I learned how to implement authentication, real-time data updates, and gesture-based interactions while improving the user experience with features like post deletion, profile customization, and infinite scrolling. One of the biggest challenges was ensuring seamless state updates across different screens, particularly for the profile feed, which required optimizing Firestore queries and implementing real-time listeners. I enjoyed refining the app’s functionality, troubleshooting issues, and enhancing user interactions to create a smooth and engaging social media experience.
+
+With love, 
+<br>
+**[Vie P.](https://whatdoyouknowaboutlove.com/viepaula/)**
