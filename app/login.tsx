@@ -69,7 +69,7 @@ export default function LoginScreen() {
   
   return (
     <View style={styles.container}>
-      <Image source={require("@/assets/images/logo.png")} style={styles.logo} resizeMode="contain" />
+      <Image source={require("@/assets/images/LumigramPug.webp")} style={styles.logo} resizeMode="contain" />
       <Text accessibilityRole="header" style={styles.header}>Login</Text>
 
       <TextInput
@@ -118,7 +118,7 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#00003C", paddingHorizontal: 20 },
-  logo: { width: "100%", height: 120, marginBottom: 30 },
+  logo: { width: "100%", height: 200, marginBottom: 30 },
   header: { fontSize: 24, fontWeight: "bold", color: "#ECEDEE", marginBottom: 20 },
   input: { width: "90%", padding: 12, borderWidth: 2, borderColor: "#1ED2AF", borderRadius: 8, marginVertical: 8, color: "#ECEDEE", backgroundColor: "#00003C" },
   buttonContainer: { width: "90%", alignItems: "center", marginTop: 20 },

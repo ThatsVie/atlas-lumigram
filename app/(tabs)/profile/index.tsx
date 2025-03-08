@@ -15,7 +15,7 @@ import { useProfile } from "@/context/ProfileContext";
 import { useAuth } from "@/context/AuthProvider";
 import ImageModal from "@/components/ImageModal";
 import { deletePost } from "@/lib/firestore";
-import * as Haptics from "expo-haptics"; // ✅ Import Haptics
+import * as Haptics from "expo-haptics"; 
 
 const screenWidth = Dimensions.get("window").width;
 const imageSize = screenWidth / 3;
@@ -48,10 +48,10 @@ export default function ProfileScreen() {
             try {
               await deletePost(postId, imageUrl);
               await refreshProfilePosts(); // Refresh after deletion
-              await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); // ✅ Haptic success feedback
+              await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); //  Haptic success feedback
               Alert.alert("Success", "Post deleted.");
             } catch (error) {
-              await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error); // ❌ Haptic error feedback
+              await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error); //  Haptic error feedback
               Alert.alert("Error", "Failed to delete the post. Please try again.");
             }
           },

@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     position: "absolute",
-    top: 40,
+    top: 150,
     right: 20,
     backgroundColor: "rgba(255, 0, 0, 0.8)",
     padding: 12,
