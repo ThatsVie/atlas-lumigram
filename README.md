@@ -1,7 +1,8 @@
 <div align="center">
 
 # Lumigram - Mobile Full Stack
-![A stylish and charismatic pug sitting in a trendy café, using a smartphone to interact with social media  The pug is wearing fashionable accessories l](https://github.com/user-attachments/assets/cc462df9-86ac-4e53-a321-a483cee81e0b)
+
+![Lumigram pug](https://github.com/user-attachments/assets/e8977cc0-e387-4648-be68-8a0dc90f17be)
 
 
 ## Project Overview
