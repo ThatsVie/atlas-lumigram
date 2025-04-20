@@ -780,4 +780,4 @@ Developing Lumigram was a valuable experience that deepened my understanding of 
 
 With love, 
 <br>
-**[Vie P.](https://whatdoyouknowaboutlove.com/viepaula/)**
+**[Vie P.](https://whatdoyouknowaboutlove.com/viep)**
